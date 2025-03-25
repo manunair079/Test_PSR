@@ -1,0 +1,33 @@
+name: Deployment (Create)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deployment:
+    name: Deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login
+        uses: azure/login@v2
+        with:
+          client-id: deda39fe-8b60-4de9-b074-4c7bb58288a7
+          tenant-id: dcac7e0b-5007-4b90-8f3b-39d5d2289aa1
+          subscription-id: d6abefe9-d8b8-4f4c-880b-1c7f6992b04d
+
+      - name: Azure Bicep Deploy   
+        working-directory: .github/workflows/
+        run: |
+            az deployment group create --resource-group NVMT-ISID-EK1-RGP-Recovery-Vault --template-file Bicep_Shell175SCHADOBEGroupMemberReplication.bicep
+
